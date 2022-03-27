@@ -6,6 +6,7 @@ import {
     uploadBytesResumable,
     getDownloadURL,
   } from 'firebase/storage'
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
 import {db} from '../firebase.config'
 import {useNavigate} from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -14,7 +15,7 @@ import Spinner from '../components/Spinner'
 
 
 function CreateListing() {
-    const [geolocationEnabled, setGeolocationEnabled] = useState(false)
+    const [geolocationEnabled, setGeolocationEnabled] = useState(true)
     const [loading, setLoading] = useState(false)
     const [formData, setFormData] = useState({
         type: 'rent',
@@ -92,7 +93,7 @@ function CreateListing() {
 
         if (geolocationEnabled) {
         const response = await fetch(
-            `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${process.env.REACT_APP_GEOCODE_API_KEY}`
+            `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=AIzaSyDzP5U61aGSWU9i7avDA9Sb-MV5VsWuXFA`
         )
 
         const data = await response.json()
@@ -165,8 +166,23 @@ function CreateListing() {
     return
     })
     
-        console.log(imgUrls)
+        const formDataCopy = {
+            ...formData,
+            imgUrls,
+            geolocation,
+            timestamp: serverTimestamp()
+        }
+
+        formDataCopy.location = address
+        delete formDataCopy.images
+        delete formDataCopy.address
+        !formDataCopy.offer && delete formDataCopy.discountedPrice
+
+        const docRef = await addDoc(collection(db, 'listings'), formDataCopy)
+        
         setLoading(false)
+        toast.success('Listing saved')
+        navigate(`/category/${formDataCopy.type}/${docRef.id}`)
     } 
 
     if(loading) {
