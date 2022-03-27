@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import {useNavigate} from 'react-router-dom'
+import { toast } from 'react-toastify'
 import Spinner from '../components/Spinner'
 
 function CreateListing() {
@@ -62,6 +63,48 @@ function CreateListing() {
 
     const onSubmit = async (e) => {
         e.preventDefault()
+        
+        setLoading(true)
+
+        if (discountedPrice >= regularPrice) {
+        setLoading(false)
+        toast.error('Discounted price needs to be less than regular price')
+        return
+        }
+
+        if (images.length > 6) {
+        setLoading(false)
+        toast.error('Max 6 images')
+        return
+        }
+
+        let geolocation = {}
+        let location
+
+        if (geolocationEnabled) {
+        const response = await fetch(
+            `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${process.env.REACT_APP_GEOCODE_API_KEY}`
+        )
+
+        const data = await response.json()
+
+        geolocation.lat = data.results[0]?.geometry.location.lat ?? 0
+        geolocation.lng = data.results[0]?.geometry.location.lng ?? 0
+
+        location =
+            data.status === 'ZERO_RESULTS'
+            ? undefined
+            : data.results[0]?.formatted_address
+
+        if (location === undefined || location.includes('undefined')) {
+            setLoading(false)
+            toast.error('Please enter a correct address')
+            return
+        }
+        } else {
+            geolocation.lat = latitude
+            geolocation.lng = longitude
+        }
     }
 
     if(loading) {
@@ -70,8 +113,32 @@ function CreateListing() {
 
 
     const onMutate = (e) => {
+        let boolean = null
 
+        if(e.target.value === 'true') {
+            boolean = true
         }
+
+        if(e.target.value === 'false') {
+            boolean = false
+        }
+
+        if(e.target.files) {
+            setFormData((prevState) => ({
+                ...prevState,
+                images: e.target.files
+            }))
+        }
+
+        if(!e.target.files) {
+            setFormData((prevState) => ({
+                ...prevState,
+                [e.target.id]: boolean ?? e.target.value
+            }))
+        }
+
+
+    }
 
   return (
     <div className='profile'>
