@@ -72,26 +72,34 @@ button {
   justify-content: center;
 }
 
-/* .removeIcon {
-  cursor: pointer;
-  position: absolute;
-  top: -3%;
-  right: -2%;
-} */
-
 .removeIcon {
   cursor: pointer;
   position: absolute;
-  top: 5%;
-  left: -12%;
+  top: 15%;
+  right: -5%;
 }
 
 .editIcon {
   cursor: pointer;
   position: absolute;
   top: -3.4%;
-  right: 20px;
+  right: -5%;
 }
+
+/* .removeIcon {
+  cursor: pointer;
+  position: absolute;
+  top: 5%;
+  left: -12%;
+} */
+
+ul.listingsList {
+  
+  padding-left: 0rem;
+  margin-right: 2rem;
+}
+
+
 
 .pageContainer,
 .offers,

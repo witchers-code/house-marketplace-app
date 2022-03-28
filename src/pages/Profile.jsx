@@ -103,7 +103,7 @@ function Profile() {
             toast.success('Successfully deleted listing')
         }
     }
-    const onEdit = () => {}
+    const onEdit = (listingId) => navigate(`/edit-listing/${listingId}`)
 
     // user ?  <h1>{user.displayName}</h1> : "Not Logged In"
     return (
