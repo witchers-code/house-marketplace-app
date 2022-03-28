@@ -72,12 +72,20 @@ button {
   justify-content: center;
 }
 
-.removeIcon {
+/* .removeIcon {
   cursor: pointer;
   position: absolute;
   top: -3%;
   right: -2%;
+} */
+
+.removeIcon {
+  cursor: pointer;
+  position: absolute;
+  top: 5%;
+  left: -12%;
 }
+
 .editIcon {
   cursor: pointer;
   position: absolute;
